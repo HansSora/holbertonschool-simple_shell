@@ -47,31 +47,13 @@ The code can be compiled using **gcc** with additional attributes as follows. It
 
 ## Code Structure
 
-To develop the simple shell, we have built fundamental functionalities that allow to read a command provided by the user, process it, and execute it by referencing the respective Unix system call. To achieve such functionalities, as described in the figure below, our code relies on key functionalities related to 
+To develop the simple shell, we have built fundamental functionalities that allow to read a command provided by the user, process it, and execute it by referencing the respective Unix system call.
+
 1. manipulating string files 
 2. accessing and displaying environment variables
 3. accessing the full path of any Unix shell command
 4. reading and executing any shell command.
 
-
-
-provides an implementation of fundamental string functionalities such as :
-	- `int _strlen(char *string)` - Finds the length of `string`
-	- `char *_strcat(char *dest, char *src)` - Concatenates content of `src` to the end of `dest`
-	- `char *_strcpy(char *dest, char *src)` - Copies the content of `src` to `dest`
-	- `char *_strdup(char *string)` - Duplicates a `string`
-	- `int _strcmp(char *s1, char *s2)` - Compares `s1` with `s2`
-	- `int _str_n_cmp(char *s1, char *s2, int n)` - Compares `s1` with `s2` regarding `n` bytes
-- [environment_utils.c] - provides an implementation of key functionalities such as :
-	- `char *_getenv(char *name)` - Function that searches for the environment `name`
-	- `int _prinenv(void)` - Function that prints the environment `name`
-- [command_path.c] - Finds the full path of the provided command
-- [shell.c]- Logic implementation of our simple shell
-	- `int command_read(char *s, size_t __attribute__((unused)) characters)` - Function that reads the `command` provided by `command_path()`
-	- `int execute(char *cmd_array[])` - Function that takes an `command` and executes it
-	- `int main(int __attribute__((unused)) argc, char *argv[])` - Entry point that executes every previously mentioned function
-
-Feel free to use the code developed for the simple shell and get back to us with discussions on how to further improve it.
 
 ## Authors
 
