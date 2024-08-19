@@ -77,6 +77,11 @@ int execute(char *cmd_arr[])
 	return (0);
 }
 
+/**
+ * main - Entry point
+ * Return: 0 on success, 1 on failure
+ */
+
 int main(void)
 {
 	char *line = NULL;
