@@ -1,0 +1,64 @@
+.\" Manpage for simple_shell
+.\" Contact Hans Sora <https://github.com/HansSora> and Gerti Bajo <https://github.com/Gerti23> for support
+.TH SIMPLE_SHELL 1 "August 2024" "1.0" "Simple Shell Manual"
+.SH NAME
+simple_shell \- a simple Unix shell
+.SH SYNOPSIS
+.B simple_shell
+.RI [ options ]
+.SH DESCRIPTION
+The
+.B simple_shell
+is a basic Unix shell implementation designed to handle command execution in both interactive and non-interactive modes. It mimics the behavior of
+.B /bin/sh
+and supports basic command execution, error reporting, and prompt display.
+.SH OPTIONS
+No options are currently supported.
+.SH COMMANDS
+The shell supports executing commands as follows:
+.TP
+.B command
+Executes the specified command. The shell uses
+.B fork
+and
+.B execve
+to run the command.
+.SH ERRORS
+Error messages are formatted as:
+.B ./hsh: 1: command: not found
+where
+.B ./hsh
+is the name of the executable,
+.B 1
+is the line number of the command in non-interactive mode,
+and
+.B command
+is the command that failed.
+.SH USAGE
+The shell operates in two modes:
+.TP
+.B Interactive Mode
+Run the shell executable and enter commands at the prompt. Example:
+.RS
+$ ./hsh
+$ /bin/ls
+$ exit
+.RE
+.TP
+.B Non-Interactive Mode
+Provide commands via input redirection or piping. Example:
+.RS
+$ echo "/bin/ls" | ./hsh
+$ cat commands.txt | ./hsh
+.RE
+.SH FILES
+.TP
+.B hsh
+The main executable file for the shell.
+.TP
+.B commands.txt
+An example file used for input redirection in non-interactive mode (optional).
+.SH AUTHOR
+Hans Sora <https://github.com/HansSora> and Gerti Bajo <https://github.com/Gerti23>
+.SH SEE ALSO
+.B sh(1)
