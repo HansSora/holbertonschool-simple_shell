@@ -77,13 +77,6 @@ int execute(char *cmd_arr[])
 	return (0);
 }
 
-/**
- * main - Entry point
- * @argc: The number of arguments
- * @argv: The arguments
- * Return: 0 on success, 1 on failure
- */
-
 int main(void)
 {
 	char *line = NULL;
