@@ -1,35 +1,21 @@
-#ifndef SHELL_H
-#define SHELL_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
-/* Define the maximum number of command arguments */
-#define MAX_CMD_ARGS 128
+extern char **environ;
 
-/**
- * parse_input - Parses the input string into an array of commands
- * @input: Input string to parse
- * @cmd_array: Array to hold parsed commands
- */
-void parse_input(char *input, char *cmd_array[]);
+int _printenv(void);
+char *_getenv(char *var);
+char *command_path(char *cmd);
+int command_read(char *s);
+int execute(char *cmd_arr[]);
+void trim_whitespace(char *str);
 
-/**
- * execute - Executes the command
- * @cmd_array: Array of commands to execute
- *
- * Return: 0 on success, -1 on failure
- */
-int execute(char *cmd_array[]);
-
-/**
- * clear_cmd_array - Clears the command array
- * @cmd_array: Array of commands to clear
- */
-void clear_cmd_array(char *cmd_array[]);
-
-#endif /* SHELL_H */
+#endif
