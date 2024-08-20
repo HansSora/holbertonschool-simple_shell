@@ -25,7 +25,7 @@ int command_read(char *s)
     }
     cmd_array[i] = NULL;
 
-    // Execute the first command in cmd_array
+    /* Execute the command */
     if (cmd_array[0] != NULL)
         return (execute(cmd_array[0]));
 
@@ -88,4 +88,38 @@ int main(void)
         fflush(stdout);
 
         /* Read the command from standard input */
-        nrea
+        nread = getline(&line, &len, stdin);
+        if (nread == -1)
+        {
+            /* Handle end of file (Ctrl+D) */
+            if (feof(stdin))
+            {
+                printf("\n");
+                free(line);
+                exit(EXIT_SUCCESS);
+            }
+            else
+            {
+                perror("getline");
+                free(line);
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        /* Remove newline character from the end of the line */
+        if (line[nread - 1] == '\n')
+            line[nread - 1] = '\0';
+
+        /* If the command is empty, just display the prompt again */
+        if (strlen(line) == 0)
+            continue;
+
+        /* Execute the command */
+        if (command_read(line) == 2)
+            break;
+    }
+
+    /* Clean up */
+    free(line);
+    return 0;
+}
