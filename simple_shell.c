@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <string.h>
-
-#define PROMPT "#cisfun$ "
+#include "shell.h"
 
 /**
  * execute - Executes a command.
@@ -25,18 +18,23 @@ int execute(char *cmd)
     }
     if (pid == 0)
     {
-        // Child process
+        /* Child process */
         execlp(cmd, cmd, (char *)NULL);
-        // If execlp returns, it must have failed
+        /* If execlp returns, it must have failed */
         perror(cmd);
         exit(EXIT_FAILURE);
     }
     else
     {
-        // Parent process
+        /* Parent process */
         do {
             waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+
+        if (WEXITSTATUS(status) != 0)
+        {
+            return 1;  /* Return 1 to indicate failure */
+        }
     }
     return 0;
 }
@@ -53,15 +51,15 @@ int main(void)
 
     while (1)
     {
-        // Display the prompt
-        printf(PROMPT);
+        /* Display the prompt */
+        printf("#cisfun$ ");
         fflush(stdout);
 
-        // Read the command from standard input
+        /* Read the command from standard input */
         nread = getline(&line, &len, stdin);
         if (nread == -1)
         {
-            // Handle end of file (Ctrl+D)
+            /* Handle end of file (Ctrl+D) */
             if (feof(stdin))
             {
                 printf("\n");
@@ -76,22 +74,22 @@ int main(void)
             }
         }
 
-        // Remove newline character from the end of the line
+        /* Remove newline character from the end of the line */
         if (line[nread - 1] == '\n')
             line[nread - 1] = '\0';
 
-        // If the command is empty, just display the prompt again
+        /* If the command is empty, just display the prompt again */
         if (strlen(line) == 0)
             continue;
 
-        // Execute the command
+        /* Execute the command */
         if (execute(line) != 0)
         {
             fprintf(stderr, "./shell: No such file or directory\n");
         }
     }
 
-    // Clean up
+    /* Clean up */
     free(line);
     return 0;
 }
