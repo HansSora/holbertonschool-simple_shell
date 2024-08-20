@@ -15,7 +15,7 @@ int _printenv(void);
 char *_getenv(char *var);
 char *command_path(char *cmd);
 int command_read(char *s);
-int execute(char *cmd_arr[]); /* Updated function signature */
+int execute(char *cmd_arr[]); /* Use this signature for execute */
 void trim_whitespace(char *str);
 
 #endif

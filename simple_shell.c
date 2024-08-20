@@ -27,20 +27,21 @@ int command_read(char *s)
 
     /* Execute the command */
     if (cmd_array[0] != NULL)
-        return (execute(cmd_array[0]));
+        return (execute(cmd_array)); /* Correctly passing char *cmd_arr[] */
 
     return (1);
 }
 
 /**
  * execute - Executes a command.
- * @cmd: The command to execute.
+ * @cmd_arr: The command array to execute.
  * Return: 0 on success, 1 on failure.
  */
-int execute(char *cmd)
+int execute(char *cmd_arr[])
 {
     pid_t pid;
     int status;
+    char *cmd = cmd_arr[0]; /* The command to execute */
 
     pid = fork();
     if (pid < 0)
@@ -51,8 +52,8 @@ int execute(char *cmd)
     if (pid == 0)
     {
         /* Child process */
-        execlp(cmd, cmd, (char *)NULL);
-        /* If execlp returns, it must have failed */
+        execvp(cmd, cmd_arr);
+        /* If execvp returns, it must have failed */
         perror(cmd);
         exit(EXIT_FAILURE);
     }
