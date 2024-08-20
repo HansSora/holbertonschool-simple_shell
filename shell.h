@@ -2,29 +2,33 @@
 #define SHELL_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <stdlib.h>
-#include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 
-/* global variable for the environment */
+/* Global variable for the environment */
 extern char **environ;
+char *name;
 
-/* environment utilities */
+/* String utilities */
+int _strlen(char *string);
+char *_strcat(char *dest, char *src);
+char *_strcpy(char *dest, char *src);
+char *_strdup(char *string);
+int _strcmp(char *s1, char *s2);
+int _str_n_cmp(char *s1, char *s2, int n);
+
+/* Environment utilities */
 int _printenv(void);
-char *_getenv(char *var);
+char *_getenv(char *name);
 
-/*command path */
+/* command path */
 char *command_path(char *cmd);
 
-void trim_space(char *s);
-
-/* shell functions and commands */
-int command_tok(char *line);
-int execute(char *cmd_arr[]);
-
-void free_args(char *s[]);
-
+/* main functions */
+int command_read(char *s, size_t __attribute__((unused)) characters);
+int execute(char *cmd_array[]);
 #endif
