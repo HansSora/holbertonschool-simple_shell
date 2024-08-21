@@ -1,104 +1,113 @@
-#include "shell.h"
+#include "main.h"
+
+/**
+ * command_read - Reads a command from stdin
+ * @s: The command to read
+ * Return: 0 on success, 1 on failure
+ */
+
+int command_read(char *s)
+{
+	int i;
+	char *token = NULL;
+	char *cmd_array[100];
+
+	if (strcmp(s, "exit") == 0)
+		return (2);
+	if (strcmp(s, "env") == 0)
+		return (_printenv());
+	token = strtok(s, " ");
+	i = 0;
+	while (token != NULL && i < 100)
+	{
+		cmd_array[i] = token;
+		token = strtok(NULL, " ");
+		i++;
+	}
+	cmd_array[i] = NULL;
+	return (execute(cmd_array));
+}
+
+/**
+ * execute - Executes a command
+ * @cmd_arr: The command to execute
+ * Return: 0 on success, 1 on failure
+ */
+
+int execute(char *cmd_arr[])
+{
+	pid_t pid;
+	char *exe_path;
+	int status;
+
+	exe_path = command_path(cmd_arr[0]);
+	if (exe_path == NULL)
+	{
+		fprintf(stderr, "./hsh: 1: %s: not found\n", cmd_arr[0]);
+		return (1);
+	}
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("Error at creating a child process\n");
+		exit (1);
+	}
+	if (pid > 0)
+	{
+		do
+		{
+			waitpid(pid, &status, WUNTRACED);
+		}
+		while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		if (WEXITSTATUS(status) != 0)
+		{
+			exit(2);
+		}
+	}
+	else if (pid == 0)
+	{
+		if (execvp(exe_path, cmd_arr) == -1)
+		{
+			fprintf(stderr, "./hsh: 1: %s: not found\n", cmd_arr[0]);
+			exit(127);
+		}
+	}
+	free(exe_path);
+	return (0);
+}
+
 /**
  * main - Entry point
- * @argc: argument count
- * @argv: argument values
- * Return: Always 0 (Success)
+ * @argc: The number of arguments
+ * @argv: The arguments
+ * Return: 0 on success, 1 on failure
  */
-int main(int __attribute__((unused)) argc, char *argv[])
+
+int main(void)
 {
 	char *line = NULL;
-	size_t buff_size = 0;
+	size_t buf_size = 0;
 	ssize_t characters = 0;
-
-	name = argv[0];
 
 	while (1)
 	{
 		if (isatty(STDIN_FILENO) == 1)
 			write(1, "$ ", 2);
-		characters = getline(&line, &buff_size, stdin);
-
+		characters = getline(&line, &buf_size, stdin);
 		if (characters == -1)
 		{
 			if (isatty(STDIN_FILENO) == 1)
 				write(1, "\n", 1);
 			break;
 		}
-
 		if (line[characters - 1] == '\n')
 			line[characters - 1] = '\0';
+		trim_whitespace(line);
 		if (*line == '\0')
 			continue;
-		if (command_read(line, characters) == 2)
+		if (command_read(line) == 2)
 			break;
 	}
 	free(line);
-	line = NULL;
-	return (0);
-}
-/**
- * command_read - function that reads the commands
- * @s: command
- * @characters: characters of command
- * Return: return int from execute command
- */
-int command_read(char *s, size_t __attribute__ ((unused)) characters)
-{
-	char *token = NULL;
-	char *cmd_array[100];
-	int i = 0;
-
-	if (_strcmp(s, "exit") == 0)
-		return (2);
-	if (_strcmp(s, "env") == 0)
-		return (_printenv());
-
-	token = strtok(s, " ");
-	while (token)
-	{
-		cmd_array[i] = token;
-		i++;
-		token = strtok(NULL, " ");
-	}
-	cmd_array[i] = NULL;
-
-	return (execute(cmd_array));
-}
-/**
- * execute - Function that executes the shell
- * @cmd_array: First operand a pointer
- * Return: Return an int
- */
-int execute(char *cmd_array[])
-{
-	char *exe_path = NULL;
-	char *cmd = NULL;
-	pid_t pid;
-	int status;
-
-	cmd = cmd_array[0];
-	exe_path = command_path(cmd);
-	if (exe_path == NULL)
-	{
-		write(2, _strcat(cmd, ": Not found\n"), _strlen(cmd) + 12);
-		return (3);
-	}
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("Error creating child\n");
-		return (-1);
-	}
-	if (pid > 0)
-		wait(&status);
-	else if (pid == 0)
-	{
-		execve(exe_path, cmd_array, environ);
-		perror("Error");
-		exit(1);
-	}
-
-	free(exe_path);
 	return (0);
 }
