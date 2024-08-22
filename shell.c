@@ -61,6 +61,8 @@ int execute(char *cmd_arr[])
         do {
             waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+        free(exe_path);
+        return (WEXITSTATUS(status));
     }
     else if (pid == 0)
     {
@@ -70,6 +72,7 @@ int execute(char *cmd_arr[])
             exit(127);
         }
     }
+
     free(exe_path);
     return (0);
 }
