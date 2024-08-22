@@ -70,5 +70,5 @@ void trim_whitespace(char *str)
 		str[i] = '\0';
 		i--;
 	}
-	
+
 }
