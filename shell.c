@@ -76,8 +76,6 @@ int execute(char *cmd_arr[])
 
 /**
  * main - Entry point
- * @argc: The number of arguments
- * @argv: The arguments
  * Return: 0 on success, 1 on failure
  */
 
