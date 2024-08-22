@@ -3,8 +3,9 @@
 /**
  * command_read - Reads a command from stdin
  * @s: The command to read
- * Return: 0 on success, 1 on failure, 2 to indicate exit
+ * Return: 0 on success, 1 on failure
  */
+
 int command_read(char *s)
 {
 	int i;
@@ -12,11 +13,10 @@ int command_read(char *s)
 	char *cmd_array[100];
 
 	if (strcmp(s, "exit") == 0)
-		return (2);  /* Return 2 to indicate exit */
-
+		return (2);
 	if (strcmp(s, "env") == 0)
 		return (_printenv());
-
+		
 	token = strtok(s, " ");
 	i = 0;
 	while (token != NULL && i < 100)
@@ -34,6 +34,7 @@ int command_read(char *s)
  * @cmd_arr: The command to execute
  * Return: 0 on success, 1 on failure
  */
+
 int execute(char *cmd_arr[])
 {
 	pid_t pid;
@@ -50,60 +51,64 @@ int execute(char *cmd_arr[])
 	if (pid < 0)
 	{
 		perror("Error at creating a child process\n");
-		free(exe_path);
-		return (1);
+		exit (1);
 	}
 	if (pid > 0)
 	{
-		do {
-		waitpid(pid, &status, WUNTRACED);
-		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-
+		do
+		{
+			waitpid(pid, &status, WUNTRACED);
+		}
+		while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		if (WEXITSTATUS(status) != 0)
+		{
+			exit(2);
+		}
 	}
 	else if (pid == 0)
 	{
 		if (execvp(exe_path, cmd_arr) == -1)
 		{
 			fprintf(stderr, "./hsh: 1: %s: not found\n", cmd_arr[0]);
-			free(exe_path);
-			_exit(127);  // Exit child process without affecting the shell
+			exit(127);
 		}
 	}
 	free(exe_path);
-	return (WIFEXITED(status) && WEXITSTATUS(status) != 0) ? 1 : 0;
+	return (0);
 }
 
 /**
  * main - Entry point
+ * @argc: The number of arguments
+ * @argv: The arguments
  * Return: 0 on success, 1 on failure
  */
+
 int main(void)
 {
 	char *line = NULL;
 	size_t buf_size = 0;
 	ssize_t characters = 0;
-	int status;
+
 
 	while (1)
 	{
 		if (isatty(STDIN_FILENO) == 1)
-		write(1, "$ ", 2);
-			characters = getline(&line, &buf_size, stdin);
+			write(1, "$ ", 2);
+		characters = getline(&line, &buf_size, stdin);
 		if (characters == -1)
 		{
 			if (isatty(STDIN_FILENO) == 1)
-			write(1, "\n", 1);
+				write(1, "\n", 1);
 			break;
 		}
 		if (line[characters - 1] == '\n')
-		line[characters - 1] = '\0';
+			line[characters - 1] = '\0';
 		trim_whitespace(line);
 		if (*line == '\0')
 			continue;
-
-		status = command_read(line);
-		if (status == 2)
-		break;  /* Exit on `exit` command */
+		if (command_read(line) == 2)
+			break;
 	}
 	free(line);
 	return (0);
