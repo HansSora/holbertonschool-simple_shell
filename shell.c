@@ -3,7 +3,6 @@
 /**
  * command_read - Reads a command from stdin
  * @s: The command to read
- * 
  * Return: 0 on success, 1 on failure, 2 to exit the shell
  */
 int command_read(char *s)
@@ -13,7 +12,7 @@ int command_read(char *s)
     char *cmd_array[100];
 
     if (strcmp(s, "exit") == 0)
-        return (2);
+        return (2);  // Correctly return 2 to indicate exit
 
     if (strcmp(s, "env") == 0)
         return (_printenv());
@@ -27,14 +26,12 @@ int command_read(char *s)
         i++;
     }
     cmd_array[i] = NULL;
-
     return (execute(cmd_array));
 }
 
 /**
  * execute - Executes a command
  * @cmd_arr: The command to execute
- * 
  * Return: 0 on success, 1 on failure
  */
 int execute(char *cmd_arr[])
@@ -53,24 +50,27 @@ int execute(char *cmd_arr[])
     pid = fork();
     if (pid < 0)
     {
-        perror("Error creating a child process");
-        free(exe_path);
-        return (1);
+        perror("Error at creating a child process\n");
+        exit(1);
     }
     if (pid > 0)
     {
         do {
             waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-        free(exe_path);
-        return (WEXITSTATUS(status));
+
+        // Check for exit status and exit with 2 if needed
+        if (WEXITSTATUS(status) != 0)
+        {
+            free(exe_path);
+            exit(2);
+        }
     }
     else if (pid == 0)
     {
         if (execvp(exe_path, cmd_arr) == -1)
         {
             fprintf(stderr, "./hsh: 1: %s: not found\n", cmd_arr[0]);
-            free(exe_path);
             exit(127);
         }
     }
@@ -81,7 +81,6 @@ int execute(char *cmd_arr[])
 
 /**
  * main - Entry point
- * 
  * Return: 0 on success, 1 on failure
  */
 int main(void)
@@ -89,13 +88,12 @@ int main(void)
     char *line = NULL;
     size_t buf_size = 0;
     ssize_t characters = 0;
-    int status = 0;
+    int status;
 
     while (1)
     {
         if (isatty(STDIN_FILENO) == 1)
             write(1, "$ ", 2);
-
         characters = getline(&line, &buf_size, stdin);
         if (characters == -1)
         {
@@ -103,22 +101,16 @@ int main(void)
                 write(1, "\n", 1);
             break;
         }
-
         if (line[characters - 1] == '\n')
             line[characters - 1] = '\0';
-
         trim_whitespace(line);
-
         if (*line == '\0')
             continue;
 
         status = command_read(line);
-
-        if (status == 2)  /* If `exit` command was read */
-            break;        /* Exit the loop */
-
+        if (status == 2)
+            break;  // Correctly break the loop on exit command
     }
-
     free(line);
-    return (status == 2 ? 0 : 1);  /* Return 0 if exited normally, 1 otherwise */
+    return (0);
 }
