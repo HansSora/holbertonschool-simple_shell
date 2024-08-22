@@ -50,15 +50,13 @@ int execute(char *cmd_arr[])
 	if (pid < 0)
 	{
 		perror("Error at creating a child process\n");
-		exit (1);
+		exit(1);
 	}
 	if (pid > 0)
 	{
-		do
-		{
+		do {
 			waitpid(pid, &status, WUNTRACED);
-		}
-		while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 		if (WEXITSTATUS(status) != 0)
 		{
 			exit(2);
