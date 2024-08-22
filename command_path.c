@@ -3,7 +3,7 @@
 /**
  * command_path - Finds the full path of a command
  * @cmd: The command to find
- * Return: The full path of the command or NULL if not found
+ * Return: The full path of the command
  */
 char *command_path(char *cmd)
 {
@@ -16,14 +16,12 @@ char *command_path(char *cmd)
         fprintf(stderr, "Path variable not found\n");
         return (NULL);
     }
-
     path_copy = strdup(path);
     if (path_copy == NULL)
     {
         fprintf(stderr, "Error copying path\n");
         return (NULL);
     }
-
     token = strtok(path_copy, ":");
     while (token != NULL)
     {
@@ -46,9 +44,7 @@ char *command_path(char *cmd)
         token = strtok(NULL, ":");
     }
     free(path_copy);
-
     if (stat(cmd, &buf) == 0)
         return (strdup(cmd));
-
     return (NULL);
 }

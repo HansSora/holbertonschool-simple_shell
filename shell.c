@@ -3,7 +3,7 @@
 /**
  * command_read - Reads a command from stdin
  * @s: The command to read
- * Return: 0 on success, 1 on failure, 2 to exit the shell
+ * Return: 0 on success, 1 on failure
  */
 int command_read(char *s)
 {
@@ -12,7 +12,7 @@ int command_read(char *s)
     char *cmd_array[100];
 
     if (strcmp(s, "exit") == 0)
-        return (2);  /* Correctly return 2 to indicate exit */
+        return (2);  /* Return 2 to indicate exit */
 
     if (strcmp(s, "env") == 0)
         return (_printenv());
@@ -46,7 +46,6 @@ int execute(char *cmd_arr[])
         fprintf(stderr, "./hsh: 1: %s: not found\n", cmd_arr[0]);
         return (1);
     }
-
     pid = fork();
     if (pid < 0)
     {
@@ -58,8 +57,6 @@ int execute(char *cmd_arr[])
         do {
             waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-
-        /* Check for exit status and exit with 2 if needed */
         if (WEXITSTATUS(status) != 0)
         {
             free(exe_path);
@@ -71,10 +68,10 @@ int execute(char *cmd_arr[])
         if (execvp(exe_path, cmd_arr) == -1)
         {
             fprintf(stderr, "./hsh: 1: %s: not found\n", cmd_arr[0]);
+            free(exe_path);
             exit(127);
         }
     }
-
     free(exe_path);
     return (0);
 }
@@ -109,7 +106,7 @@ int main(void)
 
         status = command_read(line);
         if (status == 2)
-            break;  /* Correctly break the loop on exit command */
+            break;  /* Exit on `exit` command */
     }
     free(line);
     return (0);

@@ -2,7 +2,6 @@
 
 /**
  * _printenv - Prints the environment
- * @void: void
  * Return: 0 on success, -1 on failure
  */
 int _printenv(void)
