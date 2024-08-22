@@ -114,11 +114,11 @@ int main(void)
 
         status = command_read(line);
 
-        if (status == 2)  // If `exit` command was read
-            break;        // Exit the loop
+        if (status == 2)  /* If `exit` command was read */
+            break;        /* Exit the loop */
 
     }
 
     free(line);
-    return (status == 2 ? 0 : 1);  // Return 0 if exited normally, 1 otherwise
+    return (status == 2 ? 0 : 1);  /* Return 0 if exited normally, 1 otherwise */
 }
