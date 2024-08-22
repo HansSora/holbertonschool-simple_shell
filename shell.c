@@ -12,7 +12,7 @@ int command_read(char *s)
     char *cmd_array[100];
 
     if (strcmp(s, "exit") == 0)
-        return (2);
+        return (2);  /* Correctly return 2 to indicate exit */
 
     if (strcmp(s, "env") == 0)
         return (_printenv());
@@ -59,7 +59,7 @@ int execute(char *cmd_arr[])
             waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
 
-        // Check for exit status and exit with 2 if needed
+        /* Check for exit status and exit with 2 if needed */
         if (WEXITSTATUS(status) != 0)
         {
             free(exe_path);
@@ -109,7 +109,7 @@ int main(void)
 
         status = command_read(line);
         if (status == 2)
-            break;  // Correctly break the loop on exit command
+            break;  /* Correctly break the loop on exit command */
     }
     free(line);
     return (0);
