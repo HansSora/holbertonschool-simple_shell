@@ -44,7 +44,6 @@ void trim_whitespace(char *str)
     int i, j;
     int len = strlen(str);
 
-    // Trim leading whitespace
     i = 0;
     while (str[i] == ' ' || str[i] == '\t')
         i++;
