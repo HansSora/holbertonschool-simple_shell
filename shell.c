@@ -53,8 +53,9 @@ int execute(char *cmd_arr[])
     pid = fork();
     if (pid < 0)
     {
-        perror("Error at creating a child process");
-        exit(1);
+        perror("Error creating a child process");
+        free(exe_path);
+        return (1);
     }
     if (pid > 0)
     {
@@ -69,6 +70,7 @@ int execute(char *cmd_arr[])
         if (execvp(exe_path, cmd_arr) == -1)
         {
             fprintf(stderr, "./hsh: 1: %s: not found\n", cmd_arr[0]);
+            free(exe_path);
             exit(127);
         }
     }
@@ -112,11 +114,11 @@ int main(void)
 
         status = command_read(line);
 
-        if (status == 2)
-            break; /* Exit the shell */
+        if (status == 2)  // If `exit` command was read
+            break;        // Exit the loop
 
     }
 
     free(line);
-    return (status == 2 ? 0 : 1); /* Return 0 if exited normally, 1 otherwise */
+    return (status == 2 ? 0 : 1);  // Return 0 if exited normally, 1 otherwise
 }
